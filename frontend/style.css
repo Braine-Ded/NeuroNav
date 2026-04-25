@@ -1,0 +1,675 @@
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Poppins, sans-serif;
+}
+
+html, body {
+  overflow: hidden;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+#map {
+  height: 100dvh;
+  width: 100%;
+}
+
+/* ============================================================
+   SHARED — rules identical on both breakpoints
+   ============================================================ */
+
+/* Search bar */
+.search {
+  position: relative;
+  width: 100%;
+}
+
+.search-box {
+  position: fixed;
+  top: 20px;
+  left: 15px;
+  z-index: 1000;
+  background-color: white;
+  border: none;
+  outline: none;
+  height: 2.8rem;
+  border-radius: 25px;
+  padding: 10px 10px 10px 40px;
+  box-shadow: 3px 4px 12px 0px #797979;
+}
+
+.search > i {
+  position: absolute;
+  left: 27px;
+  top: 42px;
+  z-index: 1100;
+  transform: translateY(-50%);
+}
+
+/* Clear-filter / clear-search pill button */
+#clearFilterBtn {
+  display: none;
+  position: fixed;
+  z-index: 1001;
+  height: 2.8rem;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: white;
+  border: none;
+  border-radius: 25px;
+  padding: 0 14px;
+  cursor: pointer;
+  box-shadow: 3px 4px 12px 0px #797979;
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-family: Poppins, sans-serif;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+#clearFilterBtn:hover { background: #f3f4f6; }
+
+#clearFilterBtn i {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Overlays */
+#formBox,
+#formBoxFilter {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1200;
+}
+
+/* Option buttons */
+.option-group {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.option-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #2c6851;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.option-btn.active {
+  background: #059467;
+  color: white;
+  border-color: #059467;
+}
+
+/* Leaflet popup */
+.leaflet-popup-content-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+
+.leaflet-popup-content {
+  margin: 5px;
+  font-size: 14px;
+}
+
+.leaflet-popup-content p {
+  margin: 13px 0;
+}
+
+.validate-btn,
+.add-report-btn {
+  background: linear-gradient(135deg, #4CAF50, #81C784);
+  border: none;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.validate-btn:disabled,
+.validate-btn[disabled],
+.add-report-btn:disabled,
+.add-report-btn[disabled] {
+  background: #3d7d4f;
+  opacity: 0.75;
+  cursor: not-allowed;
+  color: #e5e7eb;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  z-index: 1400;
+  background-color: white;
+  margin: 15px;
+  border: none;
+  padding: 13px 15px 13px 10px;
+  width: fit-content;
+  border-left: 6px solid #059467;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: right 0.5s ease;
+}
+
+.toast i {
+  font-size: 1rem;
+}
+
+/* ============================================================
+   DESKTOP  >= 601 px
+   ============================================================ */
+
+@media screen and (min-width: 601px) {
+
+  /* Sidebar nav — centered vertically on right edge */
+  #navbar {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    padding: 12px 0;
+    border-radius: 14px 0 0 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    box-shadow: -2px 0 18px rgba(0, 0, 0, 0.10);
+  }
+
+  .nav-elem {
+    padding: 2px 12px;
+  }
+
+  .nav-elem button {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 6px 8px;
+    border-radius: 10px;
+    min-width: 68px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-elem button:hover {
+    background: rgba(5, 148, 103, 0.08);
+    color: #059467;
+  }
+
+  .nav-elem button.active {
+    background: rgba(5, 148, 103, 0.13);
+    color: #059467;
+  }
+
+  .nav-elem i {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-elem i.active {
+    color: #059467;
+  }
+
+  .nav-elem p {
+    font-size: 0.58rem;
+    font-weight: 500;
+  }
+
+  /* Search box leaves room for clear button on right */
+  .search-box {
+    right: 110px;
+    max-width: 500px;
+  }
+
+  /* Clear button: right-aligned, same row as search bar */
+  #clearFilterBtn {
+    top: 20px;
+    right: 110px;
+  }
+
+  /* Overlay */
+  #formBox,
+  #formBoxFilter {
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #formBox.active,
+  #formBoxFilter.active {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Form modal card */
+  .form-content,
+  .form-content-filter {
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .contro-group,
+  .filter-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .form-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #placename,
+  #timeVisited {
+    border: 1px solid #ccc;
+    outline: none;
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    background: none;
+  }
+
+  /* Submit & Apply — gradient buttons */
+  #submit-btn,
+  #apply-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #059467, #0abf9e);
+    color: white;
+  }
+
+  #reset-filter-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-size: 0.9rem;
+    background: #f9fafb;
+  }
+
+  .form-foot {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  label[for="placename"],
+  label[for="timeVisited"] {
+    align-self: flex-start;
+    font-size: 0.8rem;
+    color: #374151;
+  }
+
+  .top-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  .close-btn {
+    padding: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    z-index: 1200;
+  }
+
+  /* Toast slides in from right */
+  .toast {
+    bottom: 12px;
+    right: -400px;
+  }
+
+  .toast.show {
+    right: 0;
+  }
+}
+
+/* ============================================================
+   MOBILE  <= 600 px
+   ============================================================ */
+
+@media screen and (max-width: 600px) {
+
+  /* Bottom nav bar */
+  #navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    min-height: 65px;
+    height: auto;
+    padding: 8px 6px 10px;
+    background-color: white;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 0;
+    box-shadow: 3px 4px 12px 0px #b2b2b2;
+  }
+
+  .nav-elem {
+    padding: 0 3px;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-elem button,
+  .nav-elem .nav-link-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.78rem;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    border-radius: 10px;
+    padding: 4px 4px;
+    width: 100%;
+    min-width: 0;
+    transition: all 0.2s ease;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .nav-elem button:hover { color: #059467; }
+
+  .nav-elem button.active {
+    color: #059467;
+    font-weight: 600;
+    transform: scale(1.05);
+  }
+
+  .nav-elem i {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 0.85rem;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    min-width: 0;
+  }
+
+  .nav-elem i.active {
+    transform: scale(1.05);
+    background-color: rgba(5, 148, 103, 0.12);
+    color: #059467;
+  }
+
+  .nav-elem p {
+    font-size: 0.66rem;
+    line-height: 1.05;
+    margin: 0;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+
+  @media (max-width: 360px) {
+    .nav-elem p { font-size: 0.58rem; }
+    .nav-elem i { font-size: 0.95rem; padding: 6px; }
+    .nav-elem { padding: 0 2px; }
+  }
+
+  /* Search bar — full width */
+  .search-box {
+    right: 15px;
+  }
+
+  /* Clear button — centered below search bar */
+  #clearFilterBtn {
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    font-size: 0.78rem;
+  }
+
+  /* Overlays */
+  #formBox,
+  #formBoxFilter {
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #formBox.active,
+  #formBoxFilter.active {
+    z-index: 1300;
+    opacity: 1;
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Slide-up sheet */
+  .form-content,
+  .form-content-filter {
+    background: rgb(255, 252, 252);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    width: 100vw;
+    position: fixed;
+    bottom: 0;
+    transform: translateY(100%);
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+  }
+
+  .form-content.active,
+  .form-content-filter.active {
+    transform: translateY(0);
+  }
+
+  /* Sheet header */
+  .top-content {
+    padding: 0 20px;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background: linear-gradient(240deg, #007957, #10b981);
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.19);
+    color: white;
+  }
+
+  .top-content h3 {
+    font-weight: 500;
+  }
+
+  .close-btn {
+    padding: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+  }
+
+  /* Inputs */
+  #placename,
+  #timeVisited {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    outline: none;
+    background: none;
+  }
+
+  label[for="placename"],
+  label[for="timeVisited"] {
+    align-self: flex-start;
+    font-size: 0.8rem;
+    color: #374151;
+  }
+
+  .report-head {
+    padding: 16px 20px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-body {
+    padding-top: 5px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-foot {
+    padding: 12px 20px 20px;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+
+  .contro-group,
+  .filter-group {
+    width: 100%;
+    padding: 5px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  /* Submit button */
+  #submit-btn {
+    width: 90%;
+    margin: 16px 20px;
+    padding: 12px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #059467, #0abf9e);
+    color: white;
+  }
+
+  /* Apply filters button */
+  #apply-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #059467, #0abf9e);
+    color: white;
+  }
+
+  /* Reset filters button */
+  #reset-filter-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 30px;
+    border: 1px solid rgba(150, 150, 150, 0.64);
+    background-color: rgba(246, 246, 246, 0.63);
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  #reset-filter-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Toast — above bottom nav, slides in from right */
+  .toast {
+    bottom: 80px;
+    right: -600px;
+  }
+
+  .toast.show {
+    right: 0;
+  }
+}

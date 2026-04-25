@@ -1,0 +1,101 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1400;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.form-content {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  padding: 20px;
+  width: min(95%, 420px);
+  max-width: 420px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-content h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #111827;
+}
+
+.form-content label,
+.form-content p {
+  color: #374151;
+  font-weight: 600;
+}
+
+.option-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.option-btn,
+.opt-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #397467;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  min-width: 88px;
+  text-align: center;
+}
+
+.option-btn.active {
+  background: #059467;
+  color: #ffffff;
+  border-color: #059467;
+}
+
+.form-content button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.form-content .btn-primary {
+  background: #059467;
+  color: white;
+}
+
+.form-content .btn-secondary {
+  background: #f8fafc;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+.close-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 1rem;
+  padding: 0;
+  line-height: 1;
+  align-self: flex-end;
+}
