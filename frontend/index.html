@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calm Places</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Auth guard — redirect before page renders if no token -->
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.href = "auth.html";
+    }
+  </script>
+</head>
+
+<body>
+
+  <div class="search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" class="search-box" placeholder="Search for Calm Places">
+  </div>
+
+  <button id="clearFilterBtn" title="Clear active filters">
+    <i class="fa-solid fa-xmark"></i>
+    Clear filters
+  </button>
+
+  <div id="map"></div>
+
+  <div id="navbar">
+    <div class="nav-elem">
+      <button class="btn location">
+        <i class="fa-solid fa-location-crosshairs"></i>
+        <p>Calm Places</p>
+      </button>
+    </div>
+    <div class="nav-elem">
+      <button class="btn contribute">
+        <i class="fa-solid fa-circle-plus"></i>
+        <p>Contribute</p>
+      </button>
+    </div>
+    <div class="nav-elem">
+      <button class="btn filter">
+        <i class="fa-solid fa-filter"></i>
+        <p>Filter</p>
+      </button>
+    </div>
+    <div class="nav-elem">
+      <a href="dashboard.html" class="btn nav-link-btn">
+        <i class="fa-solid fa-house"></i>
+        <p>Dashboard</p>
+      </a>
+    </div>
+    <div class="nav-elem">
+      <button class="btn logout-btn" onclick="apiLogout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <p>Logout</p>
+      </button>
+    </div>
+  </div>
+
+  <style>
+    /* Mobile-safe logout & nav link buttons */
+    .logout-btn, .nav-link-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      text-decoration: none;
+      color: inherit;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      white-space: normal;
+    }
+    .logout-btn p, .nav-link-btn p {
+      font-size: 0.65rem;
+      margin: 0;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+    /* Shrink label text on very small screens so 5 buttons all fit */
+    @media (max-width: 360px) {
+      #navbar .btn p, .logout-btn p, .nav-link-btn p { font-size: 0.55rem; }
+      #navbar { gap: 0; }
+    }
+  </style>
+
+  <!-- Contribute form -->
+  <div id="formBox">
+    <div class="form-content">
+      <div class="top-content">
+        <h3>Add Report</h3>
+        <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="report-head">
+        <label for="placename">Enter Place Name</label>
+        <input type="text" id="placename" placeholder="Place name">
+        <label for="timeVisited">Time of visit</label>
+        <input type="time" id="timeVisited">
+      </div>
+      <div class="contro-group" data-type="noise">
+        <p>Noise Level</p>
+        <div class="option-group controNoise">
+          <button class="option-btn" data-value="QUIET">Quiet</button>
+          <button class="option-btn" data-value="MODERATE">Moderate</button>
+          <button class="option-btn" data-value="LOUD">Loud</button>
+        </div>
+      </div>
+      <div class="contro-group" data-type="crowd">
+        <p>Crowd Status</p>
+        <div class="option-group controCrowd">
+          <button class="option-btn" data-value="MOSTLY_EMPTY">Mostly Empty</button>
+          <button class="option-btn" data-value="SPACED_OUT">Spaced Out</button>
+          <button class="option-btn" data-value="CROWDED">Crowded</button>
+        </div>
+      </div>
+      <div class="contro-group" data-type="lighting">
+        <p>Lighting</p>
+        <div class="option-group controLighting">
+          <button class="option-btn" data-value="NATURAL">Natural</button>
+          <button class="option-btn" data-value="BRIGHT">Bright</button>
+          <button class="option-btn" data-value="DIM">Dim</button>
+          <button class="option-btn" data-value="FLICKERING">Flickering</button>
+        </div>
+      </div>
+      <button onclick="submitForm()" id="submit-btn">Submit</button>
+    </div>
+  </div>
+
+  <!-- Filter form -->
+  <div id="formBoxFilter">
+    <div class="form-content-filter">
+      <div class="top-content">
+        <h3>Choose Filters</h3>
+        <button id="cross" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="form-body">
+        <div class="filter-group" data-type="noise">
+          <p>Noise Status</p>
+          <div class="option-group" id="selectNoise">
+            <button class="option-btn" data-value="QUIET">Quiet</button>
+            <button class="option-btn" data-value="MODERATE">Moderate</button>
+            <button class="option-btn" data-value="LOUD">Loud</button>
+          </div>
+        </div>
+        <div class="filter-group" data-type="crowd">
+          <p>Crowd Status</p>
+          <div class="option-group" id="selectCrowd">
+            <button class="option-btn" data-value="MOSTLY_EMPTY">Mostly Empty</button>
+            <button class="option-btn" data-value="SPACED_OUT">Spaced Out</button>
+            <button class="option-btn" data-value="CROWDED">Crowded</button>
+          </div>
+        </div>
+        <div class="filter-group" data-type="lighting">
+          <p>Lighting Status</p>
+          <div class="option-group" id="selectLighting">
+            <button class="option-btn" data-value="NATURAL">Natural</button>
+            <button class="option-btn" data-value="DIM">Dim</button>
+            <button class="option-btn" data-value="BRIGHT">Bright</button>
+            <button class="option-btn" data-value="FLICKERING">Flickering</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-foot">
+        <button onclick="removeFilters()" id="reset-filter-btn">Reset Filters</button>
+        <button onclick="applyFilter()" id="apply-btn">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span>Action Successful</span>
+  </div>
+
+  <!-- Load order matters: api → storage → map → app -->
+  <script src="api.js"></script>
+  <script src="storage.js"></script>
+  <script src="map.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

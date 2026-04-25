@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calm Places — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f5f2ec;
+      --surface:   #ffffff;
+      --ink:       #1a1a18;
+      --muted:     #6b6b5e;
+      --accent:    #2d6a4f;
+      --accent-lt: #d8f3dc;
+      --warn:      #e76f51;
+      --warn-lt:   #fde8e1;
+      --gold:      #c9a84c;
+      --border:    #e2ddd4;
+      --radius:    14px;
+      --shadow:    0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100dvh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .topbar-logo i { font-size: 1rem; }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-name {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .btn-ghost:hover { background: var(--bg); }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    /* ── HERO GREETING ── */
+    .greeting {
+      margin-bottom: 32px;
+    }
+
+    .greeting h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .greeting p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 500px) {
+      .cta-strip { grid-template-columns: 1fr; }
+    }
+
+    .cta-card {
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      text-decoration: none;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      text-align: left;
+    }
+    .cta-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+
+    .cta-card.primary { background: var(--accent); color: #fff; }
+    .cta-card.secondary { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+
+    .cta-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .cta-card.primary .cta-icon { background: rgba(255,255,255,0.18); color: #fff; }
+    .cta-card.secondary .cta-icon { background: var(--accent-lt); color: var(--accent); }
+
+    .cta-text strong { display: block; font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
+    .cta-text span { font-size: 0.82rem; opacity: 0.75; }
+    .cta-card.primary .cta-text span { opacity: 0.85; }
+
+    /* ── STAT ROW ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 500px) {
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      .stat-row .stat-card:last-child { grid-column: span 2; }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+    }
+
+    .section-header a {
+      font-size: 0.82rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .section-header a:hover { text-decoration: underline; }
+
+    /* ── REPORT CARDS ── */
+    .report-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+
+    .report-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .report-card-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .report-card-body { flex: 1; min-width: 0; }
+
+    .report-card-location {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .report-card-date {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .tag-sound    { background: #e0f2fe; color: #0369a1; }
+    .tag-crowd    { background: var(--accent-lt); color: var(--accent); }
+    .tag-lighting { background: #fef9c3; color: #854d0e; }
+
+    .report-card-actions { display: flex; gap: 8px; align-self: center; }
+
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.85rem;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .btn-icon:hover { background: var(--bg); }
+    .btn-icon.danger:hover { background: var(--warn-lt); color: var(--warn); border-color: var(--warn); }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+    }
+    .empty i { font-size: 1.8rem; margin-bottom: 10px; opacity: 0.4; display: block; }
+    .empty p { font-size: 0.9rem; }
+
+    /* ── LOADING ── */
+    .skeleton {
+      background: linear-gradient(90deg, #ede8df 25%, #e2ddd4 50%, #ede8df 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── INLINE EDIT MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 28px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+
+    .modal-field { margin-bottom: 16px; }
+    .modal-field label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .option-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .opt-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-family: inherit;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.12s;
+      color: var(--ink);
+    }
+    .opt-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+
+    .btn-solid {
+      flex: 1;
+      padding: 10px;
+      border-radius: 9px;
+      border: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-solid.accent { background: var(--accent); color: #fff; }
+    .btn-solid.neutral { background: var(--bg); border: 1px solid var(--border); color: var(--ink); }
+    .btn-solid:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 1400;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .form-content {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 16px;
+      padding: 20px;
+      width: min(95%, 420px);
+      max-width: 420px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-content h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #111827;
+    }
+
+    .form-content label,
+    .form-content p {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .option-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .option-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #111827;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      min-width: 88px;
+      text-align: center;
+    }
+
+    .option-btn.active {
+      background: #059467;
+      color: #ffffff;
+      border-color: #059467;
+    }
+
+    .form-content button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-content .btn-primary {
+      background: #059467;
+      color: white;
+    }
+
+    .form-content .btn-secondary {
+      background: #f8fafc;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+
+    .close-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #6b7280;
+      font-size: 1rem;
+      padding: 0;
+      line-height: 1;
+      align-self: flex-end;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <a class="topbar-logo" href="dashboard.html">
+    <i class="fa-solid fa-leaf"></i>
+    Calm Places
+  </a>
+  <div class="topbar-right">
+    <span class="topbar-name" id="topbar-name"></span>
+    <a href="profile.html" class="btn-ghost">
+      <i class="fa-solid fa-user"></i>
+      <span class="hide-xs">Profile</span>
+    </a>
+    <button class="btn-ghost" onclick="apiLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span class="hide-xs">Logout</span>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="page">
+
+  <!-- Greeting -->
+  <div class="greeting">
+    <h1 id="greeting-text">Good morning 👋</h1>
+    <p id="greeting-sub">Here's what's happening with your calm places.</p>
+  </div>
+
+  <!-- CTAs -->
+  <div class="cta-strip">
+    <a href="index.html" class="cta-card primary">
+      <div class="cta-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+      <div class="cta-text">
+        <strong>Explore Map</strong>
+        <span>Browse & filter calm spots</span>
+      </div>
+    </a>
+    <a href="index.html#contribute" class="cta-card secondary" id="contribute-cta">
+      <div class="cta-icon"><i class="fa-solid fa-circle-plus"></i></div>
+      <div class="cta-text">
+        <strong>Add a Report</strong>
+        <span>Share conditions at a location</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-label">Your Reports</div>
+      <div class="stat-value" id="stat-reports">—</div>
+      <div class="stat-sub">submitted</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Confirmations</div>
+      <div class="stat-value" id="stat-validations">—</div>
+      <div class="stat-sub">from others</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Member Since</div>
+      <div class="stat-value" id="stat-since" style="font-size:1.3rem; padding-top:4px;">—</div>
+      <div class="stat-sub" id="stat-since-year"></div>
+    </div>
+  </div>
+
+  <!-- Recent Reports -->
+  <div class="section-header">
+    <h2>Recent Reports</h2>
+    <a href="profile.html">View all →</a>
+  </div>
+
+  <div class="report-list" id="report-list">
+    <!-- skeleton -->
+    <div class="report-card">
+      <div class="skeleton" style="width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div class="skeleton" style="height:14px;width:55%;margin-bottom:8px"></div>
+        <div class="skeleton" style="height:11px;width:30%;margin-bottom:10px"></div>
+        <div style="display:flex;gap:6px">
+          <div class="skeleton" style="height:22px;width:60px;border-radius:20px"></div>
+          <div class="skeleton" style="height:22px;width:70px;border-radius:20px"></div>
+          <div class="skeleton" style="height:22px;width:55px;border-radius:20px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="report-card">
+      <div class="skeleton" style="width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div class="skeleton" style="height:14px;width:40%;margin-bottom:8px"></div>
+        <div class="skeleton" style="height:11px;width:25%;margin-bottom:10px"></div>
+        <div style="display:flex;gap:6px">
+          <div class="skeleton" style="height:22px;width:55px;border-radius:20px"></div>
+          <div class="skeleton" style="height:22px;width:65px;border-radius:20px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="form-content">
+    <button class="close-btn" aria-label="Close edit form">✕</button>
+    <h3>Edit Report</h3>
+    <input type="hidden" id="edit-report-id">
+
+    <div class="modal-field">
+      <label>Sound Level</label>
+      <div class="option-group option-row" id="edit-sound">
+        <button class="opt-btn option-btn" data-value="QUIET">Quiet</button>
+        <button class="opt-btn option-btn" data-value="MODERATE">Moderate</button>
+        <button class="opt-btn option-btn" data-value="LOUD">Loud</button>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>Crowd</label>
+      <div class="option-group option-row" id="edit-crowd">
+        <button class="opt-btn option-btn" data-value="MOSTLY_EMPTY">Mostly Empty</button>
+        <button class="opt-btn option-btn" data-value="SPACED_OUT">Spaced Out</button>
+        <button class="opt-btn option-btn" data-value="CROWDED">Crowded</button>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>Lighting</label>
+      <div class="option-group option-row" id="edit-lighting">
+        <button class="opt-btn option-btn" data-value="NATURAL">Natural</button>
+        <button class="opt-btn option-btn" data-value="BRIGHT">Bright</button>
+        <button class="opt-btn option-btn" data-value="DIM">Dim</button>
+        <button class="opt-btn option-btn" data-value="FLICKERING">Flickering</button>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-primary" id="save-edit-btn" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="api.js"></script>
+<script src="reportForm.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

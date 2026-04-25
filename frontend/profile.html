@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f9fafb;
+            margin: 0;
+            padding: 20px;
+            color: #111827;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 15px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .row input, .row select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #f3f4f6;
+        }
+
+        .meta {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+
+        .user-card {
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+    </style>
+    <link rel="stylesheet" href="reportForm.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>User Profile</h1>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <a href="dashboard.html" style="font-size:0.9rem; color:#4f46e5; text-decoration:none;">← Back to Dashboard</a>
+      <button onclick="apiLogout()" style="background:transparent; border:1px solid #d1d5db; border-radius:6px; padding:5px 12px; cursor:pointer; font-size:0.85rem; color:#374151;">Logout</button>
+    </div>
+
+    <!-- PROFILE CARD -->
+    <div class="card">
+
+        <div class="card-header">
+            <div>
+                <h2 style="margin:0;">Profile</h2>
+                <p id="user-id-display" class="meta"></p>
+            </div>
+
+            <div>
+                <button id="editBtn" class="btn-secondary">Edit</button>
+                <button id="saveBtn" class="btn-primary" style="display:none;">Save</button>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:15px;">
+            <input id="profileName" type="text" readonly>
+            <input id="profileEmail" type="email" readonly>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <input id="profilePassword" type="password" readonly>
+            <select id="sensoryPref" disabled>
+                <option value="quiet">Quiet</option>
+                <option value="moderate">Moderate</option>
+                <option value="loud">Loud</option>
+            </select>
+        </div>
+
+        <div class="meta" id="role-badge"></div>
+        <div class="meta" id="member-since"></div>
+        <div class="meta">
+            Reports submitted: <span id="report-count"></span>
+        </div>
+
+    </div>
+
+    <!-- REPORTS -->
+    <div class="card">
+        <h2>My Reports</h2>
+        <div id="my-reports-container"></div>
+    </div>
+
+</div>
+
+<!-- EDIT REPORT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="form-content">
+    <button class="close-btn" aria-label="Close edit form">✕</button>
+    <h3>Edit Report</h3>
+    <input type="hidden" id="edit-report-id">
+
+    <div class="modal-field">
+      <label>Sound Level</label>
+      <div class="option-group" id="edit-sound">
+        <button class="option-btn" data-value="QUIET">Quiet</button>
+        <button class="option-btn" data-value="MODERATE">Moderate</button>
+        <button class="option-btn" data-value="LOUD">Loud</button>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>Crowd</label>
+      <div class="option-group" id="edit-crowd">
+        <button class="option-btn" data-value="MOSTLY_EMPTY">Mostly Empty</button>
+        <button class="option-btn" data-value="SPACED_OUT">Spaced Out</button>
+        <button class="option-btn" data-value="CROWDED">Crowded</button>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <label>Lighting</label>
+      <div class="option-group" id="edit-lighting">
+        <button class="option-btn" data-value="NATURAL">Natural</button>
+        <button class="option-btn" data-value="BRIGHT">Bright</button>
+        <button class="option-btn" data-value="DIM">Dim</button>
+        <button class="option-btn" data-value="FLICKERING">Flickering</button>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-primary" id="save-edit-btn" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script src="reportForm.js"></script>
+<script src="profile.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calm Places — Sign In</title>
+  <link rel="stylesheet" href="styleAuth.css">
+  <style>
+    /* Tab toggle — minimal additions on top of existing styleAuth.css */
+    .tab-row {
+      display: flex;
+      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 28px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 10px 0;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #9ca3af;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .tab-btn.active {
+      color: #111827;
+      border-bottom-color: #111827;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .error-msg {
+      color: #dc2626;
+      font-size: 0.85rem;
+      margin-top: -12px;
+      margin-bottom: 12px;
+      min-height: 18px;
+    }
+
+    .submitButton:disabled {
+      background: #e5e7eb;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Calm Places</h1>
+
+    <!-- Tab row -->
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-login"    onclick="switchTab('login')">Login</button>
+      <button class="tab-btn"        id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- ── LOGIN PANEL ── -->
+    <div class="tab-panel active" id="panel-login">
+      <div class="input-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" class="emailInputBox" placeholder="your@email.com">
+      </div>
+      <div class="input-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" class="passwordInputBox" placeholder="Min 6 characters">
+      </div>
+      <p class="error-msg" id="login-error"></p>
+      <button class="submitButton" id="login-btn" disabled>Login</button>
+      <div class="footPage">
+        <a href="#">Forgot Password</a> |
+        <a href="#">Need Help?</a>
+      </div>
+    </div>
+
+    <!-- ── REGISTER PANEL ── -->
+    <div class="tab-panel" id="panel-register">
+      <div class="input-group">
+        <label for="reg-name">Full Name</label>
+        <input type="text" id="reg-name" class="nameInputBox" placeholder="Min 3 characters">
+      </div>
+      <div class="input-group">
+        <label for="reg-email">Email</label>
+        <input type="email" id="reg-email" class="emailInputBox" placeholder="your@email.com">
+      </div>
+      <div class="input-group">
+        <label for="reg-password">Password</label>
+        <input type="password" id="reg-password" class="passwordInputBox" placeholder="Min 6 characters">
+      </div>
+      <p class="error-msg" id="reg-error"></p>
+      <button class="submitButton" id="reg-btn" disabled>Create Account</button>
+      <div class="footPage">
+        <a href="#">Need Help?</a> |
+        <a href="#">Contact Us</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    // ── Tab switching ──────────────────────────────────────────────
+    function switchTab(tab) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("tab-" + tab).classList.add("active");
+      document.getElementById("panel-" + tab).classList.add("active");
+    }
+
+    // ── Login validation ──────────────────────────────────────────
+    const loginEmail    = document.getElementById("login-email");
+    const loginPassword = document.getElementById("login-password");
+    const loginBtn      = document.getElementById("login-btn");
+    const loginError    = document.getElementById("login-error");
+
+    function validateLogin() {
+      loginBtn.disabled = !(
+        loginEmail.value.trim().length > 4 &&
+        loginPassword.value.trim().length >= 6
+      );
+    }
+    loginEmail.addEventListener("input", validateLogin);
+    loginPassword.addEventListener("input", validateLogin);
+
+    loginBtn.addEventListener("click", async () => {
+      loginError.textContent = "";
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Logging in…";
+      try {
+        await apiLogin(loginEmail.value.trim(), loginPassword.value.trim());
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        loginError.textContent = err.message || "Login failed. Please try again.";
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
+      }
+    });
+
+    // ── Register validation ───────────────────────────────────────
+    const regName     = document.getElementById("reg-name");
+    const regEmail    = document.getElementById("reg-email");
+    const regPassword = document.getElementById("reg-password");
+    const regBtn      = document.getElementById("reg-btn");
+    const regError    = document.getElementById("reg-error");
+
+    function validateRegister() {
+      regBtn.disabled = !(
+        regName.value.trim().length > 2 &&
+        regEmail.value.trim().length > 5 &&
+        regPassword.value.trim().length >= 6
+      );
+    }
+    regName.addEventListener("input", validateRegister);
+    regEmail.addEventListener("input", validateRegister);
+    regPassword.addEventListener("input", validateRegister);
+
+    regBtn.addEventListener("click", async () => {
+      regError.textContent = "";
+      regBtn.disabled = true;
+      regBtn.textContent = "Creating account…";
+      try {
+        await apiRegister(
+          regName.value.trim(),
+          regEmail.value.trim(),
+          regPassword.value.trim()
+        );
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        regError.textContent = err.message || "Registration failed. Please try again.";
+        regBtn.disabled = false;
+        regBtn.textContent = "Create Account";
+      }
+    });
+
+    // ── Redirect if already logged in ────────────────────────────
+    if (localStorage.getItem("token")) {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>
