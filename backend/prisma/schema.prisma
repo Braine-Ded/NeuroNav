@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String             @id @default(uuid())
+  name      String             @unique
+  email     String             @unique
+  password  String
+  createdAt DateTime           @default(now())
+  votes     ReportValidation[]
+  reports   Report[]
+}
+
+model Location {
+  id        String             @id @default(uuid())
+  name      String             @unique
+  latitude  Float
+  longitude Float
+  address   String?
+  createdAt DateTime           @default(now())
+  reports   Report[]
+  summaries LocationSummary[]
+}
+
+model LocationSummary {
+  id          String        @id @default(uuid())
+  locationId  String
+  sound       SoundLevel
+  lighting    LightingLevel
+  crowd       CrowdLevel
+//  scent       ScentLevel
+  updatedAt   DateTime      @default(now()) @updatedAt
+
+  location    Location      @relation(fields: [locationId], references: [id])
+}
+
+model Report {
+  id          String             @id @default(uuid())
+  userId      String
+  locationId  String
+  sound       SoundLevel
+  lighting    LightingLevel
+  crowd       CrowdLevel
+  // scent       ScentLevel
+  note        String?
+  createdAt   DateTime           @default(now())
+  validations ReportValidation[]
+  
+  location    Location           @relation(fields: [locationId], references: [id])
+  user        User               @relation(fields: [userId], references: [id])
+}
+
+model ReportValidation {
+  id        String        @id @default(uuid())
+  userId    String
+  reportId  String
+  createdAt DateTime      @default(now())
+  
+  report    Report        @relation(fields: [reportId], references: [id])
+  user      User          @relation(fields: [userId], references: [id])
+
+  @@unique([userId, reportId])
+}
+
+enum SoundLevel {
+  QUIET
+  MODERATE
+  LOUD
+}
+
+enum LightingLevel {
+  NATURAL
+  BRIGHT
+  DIM
+  FLICKERING
+}
+
+enum CrowdLevel {
+  MOSTLY_EMPTY
+  SPACED_OUT
+  CROWDED
+}
+
+// enum ScentLevel {
+//   NONE
+//   FRAGRANCE_FREE
+//   UNPLEASANT
+//   STRONG
+// }
